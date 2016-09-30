@@ -5,7 +5,7 @@
 # you need an ANSI C compiler. gcc is a popular one.
 CC= gcc
 CCPP = g++
-WARN= -ansi -Wall -g
+WARN= -ansi -Wall -Wno-unused-value -g
 
 # on SGI's, cc is ANSI.
 #CC= cc
@@ -20,17 +20,46 @@ RANLIB= ranlib
 # this should work in all unix systems.
 AR= ar rcu
 
-# set lua path
-LUA=/usr/local
-LUAINC=$(LUA)/include
-LUALIB=$(LUA)/lib
+# defaults
+LUA=lua
+LUAINC=/usr/include/$(LUA)
+LUALIB=/usr/lib
+
+# OSX & brew
+ifeq (/usr/local/include/lua.h,$(wildcard /usr/local/include/lua.h))
+LUA=lua
+LUAINC=/usr/local/include
+LUALIB=/usr/local/lib
+endif
+
+# ubuntu
+ifeq (/usr/include/lua5.1/lua.h,$(wildcard /usr/include/lua5.1/lua.h))
+LUA=lua5.1
+LUAINC=/usr/include/$(LUA)
+LUALIB=/usr/lib/arm-linux-gnueabihf/
+endif
+
+# lua installed in /opt
+ifeq (/opt/include/lua.h,$(wildcard /opt/include/lua.h))
+LUA=lua
+LUAINC=/opt/include
+LUALIB=/opt/lib
+endif
 
 # == END OF USER SETTINGS. DO NOT CHANGE ANYTHING BELOW THIS LINE ============
 
-INC= -I$(TOLUA)/include -I$(LUAINC) 
+INC= -I$(TOLUA)/include -I$(LUAINC)
 LIB= -L$(TOLUA)/lib -L$(LUALIB)
 
-#CFLAGS= -O2 $(WARN) $(INC)
-#CPPFLAGS=  -O2 $(WARN) $(INC)
-CFLAGS= -g $(WARN) $(INC)
-CPPFLAGS=  -g $(WARN) $(INC)
+#CFLAGS= -O2
+CFLAGS= -g
+CPPFLAGS= $(CFLAGS)
+
+CFLAGS+= $(WARN) $(INC) 
+CPPFLAGS+= $(WARN) $(INC)
+
+ifeq (/lib/arm-linux-gnueabihf,$(wildcard /lib/arm-linux-gnueabihf))
+# Raspberry Pi: no support for long long
+CFLAGS+=-DLUA_32BITS -DLUA_C89_NUMBERS
+endif
+
