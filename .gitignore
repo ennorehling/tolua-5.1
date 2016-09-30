@@ -4,6 +4,8 @@ bin/tolua
 bin/tolua_lua
 lib
 
+.DS_Store
+
 # Microsoft Visual Studio build artefacts
 src/Debug/
 src/Release/

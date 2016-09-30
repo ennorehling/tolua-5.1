@@ -6,7 +6,7 @@
 CC= gcc
 CCPP = g++
 WARN= -ansi -Wall -Wno-unused-value -g
-
+MACHINE=$(shell gcc -dumpmachine)
 # on SGI's, cc is ANSI.
 #CC= cc
 #WARN= -ansi -fullwarn
@@ -36,7 +36,7 @@ endif
 ifeq (/usr/include/lua5.1/lua.h,$(wildcard /usr/include/lua5.1/lua.h))
 LUA=lua5.1
 LUAINC=/usr/include/$(LUA)
-LUALIB=/usr/lib/arm-linux-gnueabihf/
+LUALIB=/usr/lib/$(MACHINE)/
 endif
 
 # lua installed in /opt
